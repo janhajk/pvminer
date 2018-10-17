@@ -22,9 +22,9 @@ var api_call_meter = function(port, host, call, cb) {
       if(e) {
          console.log('error in request ' + url);
          console.log(e);
-         callback(e);
+         cb(e);
       } else {
-         callback(null, response, body);
+         cb(null, response, body);
       }
    });
 };
