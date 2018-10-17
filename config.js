@@ -3,7 +3,8 @@
 exports.miner = {
    port: 3333,
    host: 'localhost',
-   count: 7
+   count: 7,
+   ppc: 130
 };
 
 // Fronius Meter

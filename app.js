@@ -67,6 +67,19 @@ var miner_gpu_set = function(count, cb) {
    }
 };
 
+var miner_active_count = function(cb) {
+   miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
+      var data = JSON.parse(r);
+      var card = data.result[3];
+      var count = card.split(";");
+      var occurences = 0;
+      for (var i = 0;i<count.length;i++) {
+         if (count[i]!='off') occurences++;
+      }
+      cb(occurences);
+   });
+};
+
 
 
 var meter_api = function(call, cb) {
@@ -102,7 +115,7 @@ var get_Grid = function(cb) {
 };
 
 var test = function() {
-   miner_api('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
+   miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
       console.log(r.toString());
    });
    meter_api(fronius_api.GetMeterRealtimeData, function(err, response, body) {
@@ -122,24 +135,26 @@ if (config.dev) test();
 
 var start = function() {
    get_Grid(function(P) {
-      var count = Math.floor(P / 130);
-      console.log('Power: ' + P + 'W');
-      if(P < 0) {
-         console.log('Cards to Activate: ' + Math.abs(count));
-         miner_gpu_set(Math.abs(count), function() {
-            miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
-               console.log(r.toString());
+      miner_active_count(function(c) {
+         var count = Math.floor((Math.abs(P)+c*config.miner.ppm) / config.miner.ppm);
+         console.log('Power: ' + P + 'W');
+         if(P < 0) {
+            console.log('Cards to Activate: ' + count);
+            miner_gpu_set(count, function() {
+               miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
+                  console.log(r.toString());
+               });
             });
-         });
-      } else {
-         console.log('No Power to activate');
-         miner_gpu_set(0, function() {
-            console.log('turned off all GPUs!');
-            miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
-               console.log(r.toString());
+         } else {
+            console.log('No Power to activate');
+            miner_gpu_set(0, function() {
+               console.log('turned off all GPUs!');
+               miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
+                  console.log(r.toString());
+               });
             });
-         });
-      }
+         }
+      });
    });
 };
 
