@@ -136,6 +136,7 @@ if (config.dev) test();
 var start = function() {
    get_Grid(function(P) {
       miner_active_count(function(c) {
+         console.log('Active Cards: ' + c);
          var count = Math.floor((Math.abs(P)+c*config.miner.ppm) / config.miner.ppm);
          console.log('Power: ' + P + 'W');
          if(P < 0) {
