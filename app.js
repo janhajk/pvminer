@@ -109,6 +109,7 @@ var start = function() {
       }
       else {
          console.log('No Power to activate');
+         miner_gpu_set(Math.abs(0));
       }
    });
 };
