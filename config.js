@@ -8,7 +8,7 @@ exports.miner = {
 // Fronius Meter
 exports.meter = {
    port: '',
-   host: '192.168.1.95'
+   host: '192.168.1.'
 };
 
 exports.dev = true;
