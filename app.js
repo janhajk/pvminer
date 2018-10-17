@@ -44,7 +44,7 @@ api_call_miner(config.miner.port, config.miner.host, '{"id":2,"jsonrpc":"2.0","m
    console.log(r.toString());
 });
 
-api_call_meter(config.meter.port, config.meter.host, '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System', function(err, response, body){
+api_call_meter(config.meter.port, config.meter.host, '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=Device&DeviceId=0&DataCollection=CommonInverterData', function(err, response, body){
    console.log('IP ' + config.meter.host);
    console.log(body);
 });
