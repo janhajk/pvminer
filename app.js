@@ -5,7 +5,7 @@ var request = require('request');
 var fronius_api = {
    GetSensorRealtimeData:   '/solar_api/v1/GetSensorRealtimeData.cgi?Scope=System&DataCollection=NowSensorData',
    GetInverterRealtimeData: '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System',
-   GetActiveDeviceInfo: '/solar_api/v1/GetActiveDeviceInfo.cgi?Scope=System'
+   GetActiveDeviceInfo: '/solar_api/v1/GetActiveDeviceInfo.cgi?DeviceClass=System'
 };
 
 
