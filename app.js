@@ -105,7 +105,7 @@ var start = function() {
             miner_api('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
                console.log(r.toString());
             });
-         }, 3000);
+         }, 10000);
       }
       else {
          console.log('No Power to activate');
