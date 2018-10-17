@@ -37,12 +37,22 @@ var api_call_meter = function(port, host, call, cb) {
 };
 
 var get_PAC = function(cb) {
-   var call = fronius_api.GetInverterRealtimeData;
+   var call = fronius_api.GetMeterRealtimeData;
    api_call_meter(config.meter.port, config.meter.host, call, function(err, response, body) {
       console.log('> IP ' + config.meter.host + '...');
       var data = JSON.parse(body);
       var pac = data.Body.Data.PAC.Values['1'];
       cb(pac);
+   });
+};
+
+var get_Grid = function(cb) {
+   var call = fronius_api.GetInverterRealtimeData;
+   api_call_meter(config.meter.port, config.meter.host, call, function(err, response, body) {
+   console.log('> IP ' + config.meter.host + '...');
+   var data = JSON.parse(body);
+   var p = data.Body.Data['0'].PowerReal_P_Sum;
+   cb(p);
    });
 };
 
@@ -58,4 +68,8 @@ api_call_meter(config.meter.port, config.meter.host, fronius_api.GetMeterRealtim
 
 get_PAC(function(pac){
    console.log('PAC: ' + pac + ' Watt');
+});
+
+get_Grid(function(P){
+   console.log('To/From Grid: ' + P + ' Watt');
 });
