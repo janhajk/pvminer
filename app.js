@@ -31,12 +31,12 @@ var miner_gpu_set = function(count) {
       if(broken_gpu.indexOf(i) === -1 && c < count) {
          c++;
          miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + id + ', ' + 1 + ']}', function(r) {
-            console.log('GPU ' + id ' turned On');
+            console.log('GPU ' + id + ' turned On');
          });
       }
       else {
          miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + id + ', ' + 0 + ']}', function(r) {
-            console.log('GPU ' + id ' turned Off');
+            console.log('GPU ' + id + ' turned Off');
          });
       }
    }
