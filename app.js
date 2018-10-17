@@ -108,7 +108,7 @@ if (config.dev) test();
 var start = function() {
    get_Grid(function(P) {
       var count = Math.floor(P / 130);
-      console.log('Power: ' P + 'W');
+      console.log('Power: ' + P + 'W');
       if(P < 0) {
          console.log('Cards to Activate: ' + Math.abs(count));
          miner_gpu_set(Math.abs(count), function() {
