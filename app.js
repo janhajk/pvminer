@@ -33,7 +33,7 @@ var miner_gpu_set = function(count, cb) {
          miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 1 + ']}', function(r) {
             console.log('GPU ' + i + ' turned On');
             f++;
-            if (f >== config.miner.count) {
+            if (f >= config.miner.count) {
                cb();
             }
          });
@@ -42,7 +42,7 @@ var miner_gpu_set = function(count, cb) {
          miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 0 + ']}', function(r) {
             console.log('GPU ' + i + ' turned Off');
             f++;
-            if (f >== config.miner.count) {
+            if (f >= config.miner.count) {
                cb();
             }
          });
