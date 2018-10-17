@@ -33,7 +33,7 @@ var get_PAC = function(cb) {
    var call = '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System';
    api_call_meter(config.meter.port, config.meter.host, call, function(err, response, body) {
       console.log('> IP ' + config.meter.host + '...');
-      var pac = body.body.Data.PAC.Values['1'];
+      var pac = body.Body.Data.PAC.Values['1'];
       cb(pac);
    });
 };
