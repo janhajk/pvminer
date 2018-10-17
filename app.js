@@ -109,6 +109,41 @@ var get_Grid = function(cb) {
    });
 };
 
+
+var start = function() {
+   get_Grid(function(P) {
+      miner_active_count(function(c) {
+         var hour = new Date().getHours();
+         console.log('Active Cards: ' + c);
+         var count = Math.floor((Math.abs(P)+c*config.miner.ppm) / config.miner.ppm);
+         console.log('Power: ' + P + 'W');
+         if(P < 0) {
+            console.log('Cards to Activate: ' + count);
+            miner_gpu_set(count, function() {
+               miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
+                  console.log(r.toString());
+               });
+            });
+         } 
+         else if (hour >= 21 || hour <= 6) {
+            console.log('Nighttime! Activate all GPUs');
+            miner_gpu_set(config.miner.count, function() {
+            });
+         }
+         else {
+            console.log('No Power to activate');
+            miner_gpu_set(0, function() {
+               console.log('turned off all GPUs!');
+            });
+         }
+      });
+   });
+};
+
+start();
+
+
+
 var test = function() {
    miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
       console.log(r.toString());
@@ -126,32 +161,3 @@ var test = function() {
 };
 
 if (config.dev) test();
-
-
-var start = function() {
-   get_Grid(function(P) {
-      miner_active_count(function(c) {
-         console.log('Active Cards: ' + c);
-         var count = Math.floor((Math.abs(P)+c*config.miner.ppm) / config.miner.ppm);
-         console.log('Power: ' + P + 'W');
-         if(P < 0) {
-            console.log('Cards to Activate: ' + count);
-            miner_gpu_set(count, function() {
-               miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
-                  console.log(r.toString());
-               });
-            });
-         } else {
-            console.log('No Power to activate');
-            miner_gpu_set(0, function() {
-               console.log('turned off all GPUs!');
-               miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
-                  console.log(r.toString());
-               });
-            });
-         }
-      });
-   });
-};
-
-start();
