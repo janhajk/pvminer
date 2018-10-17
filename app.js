@@ -25,18 +25,17 @@ var miner_api = function(call, cb) {
 
 
 var miner_gpu_set = function(count) {
-   var id = 0;
    var c = 0;
    for(var i = 0; i < config.miner.count; i++) {
       if(broken_gpu.indexOf(i) === -1 && c < count) {
          c++;
-         miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + id + ', ' + 1 + ']}', function(r) {
-            console.log('GPU ' + id + ' turned On');
+         miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 1 + ']}', function(r) {
+            console.log('GPU ' + i + ' turned On');
          });
       }
       else {
-         miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + id + ', ' + 0 + ']}', function(r) {
-            console.log('GPU ' + id + ' turned Off');
+         miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 0 + ']}', function(r) {
+            console.log('GPU ' + i + ' turned Off');
          });
       }
    }
