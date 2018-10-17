@@ -2,7 +2,8 @@
 // Claymore Miner
 exports.miner = {
    port: 3333,
-   host: 'localhost'
+   host: 'localhost',
+   count: 7
 };
 
 // Fronius Meter
