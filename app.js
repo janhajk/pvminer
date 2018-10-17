@@ -24,18 +24,27 @@ var miner_api = function(call, cb) {
 };
 
 
-var miner_gpu_set = function(count) {
+var miner_gpu_set = function(count, cb) {
    var c = 0;
+   var f = 0;
    for(var i = 0; i < config.miner.count; i++) {
       if(broken_gpu.indexOf(i) === -1 && c < count) {
          c++;
          miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 1 + ']}', function(r) {
             console.log('GPU ' + i + ' turned On');
+            f++;
+            if (f >== config.miner.count) {
+               cb();
+            }
          });
       }
       else {
          miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 0 + ']}', function(r) {
             console.log('GPU ' + i + ' turned Off');
+            f++;
+            if (f >== config.miner.count) {
+               cb();
+            }
          });
       }
    }
@@ -100,16 +109,19 @@ var start = function() {
       console.log('Power: ' + (-Math.abs(P)) + 'W');
       if(P < 0) {
          console.log('Cards to Activate: ' + Math.abs(count));
-         miner_gpu_set(Math.abs(count));
-         setTimeout(function() {
+         miner_gpu_set(Math.abs(count), function() {
             miner_api('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
                console.log(r.toString());
             });
-         }, 10000);
-      }
-      else {
+         });
+      } else {
          console.log('No Power to activate');
-         miner_gpu_set(0);
+         miner_gpu_set(0, function() {
+            console.log('turned off all GPUs!');
+            miner_api('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
+               console.log(r.toString());
+            });
+         });
       }
    });
 };
