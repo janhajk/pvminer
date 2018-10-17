@@ -27,7 +27,9 @@ var miner_api = function(call, cb) {
 var miner_gpu_set = function(count, cb) {
    var c = 0;
    var f = 0;
+   console.log('turning on ' + count + ' gpus...');
    for(var i = 0; i < config.miner.count; i++) {
+      console.log('Setting Card' + i);
       if(broken_gpu.indexOf(i) === -1 && c < count) {
          c++;
          miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 1 + ']}', function(r) {
@@ -106,7 +108,7 @@ if (config.dev) test();
 var start = function() {
    get_Grid(function(P) {
       var count = Math.floor(P / 130);
-      console.log('Power: ' + (-Math.abs(P)) + 'W');
+      console.log('Power: ' P + 'W');
       if(P < 0) {
          console.log('Cards to Activate: ' + Math.abs(count));
          miner_gpu_set(Math.abs(count), function() {
