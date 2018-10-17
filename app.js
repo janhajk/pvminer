@@ -2,6 +2,11 @@ var config = require(__dirname + '/config.js');
 var socket = require('net');
 var request = require('request');
 
+var fronius_api = {
+   GetSensorRealtimeData:   '/solar_api/v1/GetSensorRealtimeData.cgi?Scope=System',
+   GetInverterRealtimeData: '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System',
+};
+
 
 
 var api_call_miner = function(port, host, call, cb) {
@@ -30,7 +35,7 @@ var api_call_meter = function(port, host, call, cb) {
 };
 
 var get_PAC = function(cb) {
-   var call = '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System';
+   var call = fronius_api.GetInverterRealtimeData;
    api_call_meter(config.meter.port, config.meter.host, call, function(err, response, body) {
       console.log('> IP ' + config.meter.host + '...');
       var data = JSON.parse(body);
@@ -44,7 +49,7 @@ api_call_miner(config.miner.port, config.miner.host, '{"id":2,"jsonrpc":"2.0","m
    console.log(r.toString());
 });
 
-api_call_meter(config.meter.port, config.meter.host, '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=Device&DeviceId=0&DataCollection=CommonInverterData', function(err, response, body){
+api_call_meter(config.meter.port, config.meter.host, fronius_api.GetSensorRealtimeData, function(err, response, body){
    console.log('IP ' + config.meter.host);
    console.log(body);
 });
