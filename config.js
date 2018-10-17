@@ -12,4 +12,4 @@ exports.meter = {
    host: '192.168.1.92'
 };
 
-exports.dev = true;
+exports.dev = false;
