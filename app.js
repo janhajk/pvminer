@@ -13,10 +13,20 @@ var fronius_api = {
 
 
 
-var miner_api = function(call, id, cb) {
+var miner_api_write = function(call, id, cb) {
    var s = socket.Socket();
    s.on('close', function(d) {
       cb(id);
+   });
+   s.connect(config.miner.port, config.miner.host);
+   s.write(call);
+   s.end();
+};
+
+var miner_api_read = function(call, cb) {
+   var s = socket.Socket();
+   s.on('data', function(d) {
+      cb(d);
    });
    s.connect(config.miner.port, config.miner.host);
    s.write(call);
@@ -33,7 +43,6 @@ var miner_gpu_set = function(count, cb) {
       console.log('Setting Card' + i);
       if(broken_gpu.indexOf(i) === -1 && c < count) {
          c++;
-         console.log('Card On');
          call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":[' + i + ', ' + 1 + ']}';
          miner_api(call, i, function(i) {
             console.log('GPU ' + i + ' turned On');
@@ -44,7 +53,6 @@ var miner_gpu_set = function(count, cb) {
          });
       }
       else {
-         console.log('Card Off');
          call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":[' + i + ', ' + 0 + ']}';
          miner_api(call, i, function(i) {
             console.log('GPU ' + i + ' turned Off');
@@ -117,7 +125,7 @@ var start = function() {
       if(P < 0) {
          console.log('Cards to Activate: ' + Math.abs(count));
          miner_gpu_set(Math.abs(count), function() {
-            miner_api('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', 0, function(r) {
+            miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
                console.log(r.toString());
             });
          });
@@ -125,7 +133,7 @@ var start = function() {
          console.log('No Power to activate');
          miner_gpu_set(0, function() {
             console.log('turned off all GPUs!');
-            miner_api('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
+            miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
                console.log(r.toString());
             });
          });
