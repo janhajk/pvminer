@@ -97,11 +97,11 @@ if (config.dev) test();
 
 var start = function() {
    get_Grid(function(P) {
-      if(P > 0) {
+      if(P < 0) {
          var count = Math.floor(P / 130);
          console.log('Power: ' + P + 'W');
-         console.log('Cards to Activate: ' + count);
-         miner_gpu_set(count);
+         console.log('Cards to Activate: ' + Math.abs(count));
+         miner_gpu_set(Math.abs(count));
          setTimeout(function() {
             miner_api('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
                console.log(r.toString());
