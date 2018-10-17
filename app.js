@@ -15,7 +15,7 @@ var fronius_api = {
 
 var miner_api = function(call, cb) {
    var s = socket.Socket();
-   s.on('data', function(d) {
+   s.on('close', function(d) {
       cb(d);
    });
    s.connect(config.miner.port, config.miner.host);
@@ -27,12 +27,15 @@ var miner_api = function(call, cb) {
 var miner_gpu_set = function(count, cb) {
    var c = 0;
    var f = 0;
+   var call = '';
    console.log('turning on ' + count + ' gpus...');
    for(var i = 0; i < config.miner.count; i++) {
       console.log('Setting Card' + i);
       if(broken_gpu.indexOf(i) === -1 && c < count) {
          c++;
-         miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 1 + ']}', function(r) {
+         console.log('Card On');
+         call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":[' + i + ', ' + 1 + ']}';
+         miner_api(call, function(r) {
             console.log('GPU ' + i + ' turned On');
             f++;
             if (f >= config.miner.count) {
@@ -41,7 +44,9 @@ var miner_gpu_set = function(count, cb) {
          });
       }
       else {
-         miner_api('{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params": [' + i + ', ' + 0 + ']}', function(r) {
+         console.log('Card Off');
+         call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":[' + i + ', ' + 0 + ']}';
+         miner_api(call, function(r) {
             console.log('GPU ' + i + ' turned Off');
             f++;
             if (f >= config.miner.count) {
