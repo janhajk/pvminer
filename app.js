@@ -108,6 +108,9 @@ var start = function() {
             });
          }, 3000);
       }
+      else {
+         console.log('No Power to activate');
+      }
    });
 };
 
