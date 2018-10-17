@@ -44,7 +44,7 @@ var miner_gpu_set = function(count, cb) {
       if(broken_gpu.indexOf(i) === -1 && c < count) {
          c++;
          call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":[' + i + ', ' + 1 + ']}';
-         miner_api(call, i, function(i) {
+         miner_api_write(call, i, function(i) {
             console.log('GPU ' + i + ' turned On');
             f++;
             if (f >= config.miner.count) {
@@ -54,7 +54,7 @@ var miner_gpu_set = function(count, cb) {
       }
       else {
          call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":[' + i + ', ' + 0 + ']}';
-         miner_api(call, i, function(i) {
+         miner_api_write(call, i, function(i) {
             console.log('GPU ' + i + ' turned Off');
             f++;
             if (f >= config.miner.count) {
