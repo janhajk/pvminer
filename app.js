@@ -51,7 +51,7 @@ var Miner = function() {
          for(var i = 0; i < count.length; i++) {
             if(count[i] != 'off') occurences++;
          }
-         console.log('Cards currently "on": ' + c);
+         console.log('Cards currently "on": ' + occurences);
          cb(occurences);
       });
    };
