@@ -1,6 +1,11 @@
 var config = require(__dirname + '/config.js');
 var socket = require('net');
 
+const gpuStates = {
+   on: '1',
+   off: '0'
+};
+
 var Miner = function() {
    var call = function(cmd, p1, p2) {
       var c = '{"id":0,"jsonrpc":"2.0","method":"';
@@ -50,22 +55,20 @@ var Miner = function() {
    // Set 'count' amount of GPUs 'on', turns the rest 'off'
    this.setGpuCount = function(count, cb) {
       var onGpus = 0; // counter for GPUs turned 'on'
-      var f = 0; // async counter
+      var f = 0;      // async counter
       console.log('turning on ' + count + ' gpus...');
       // Iterate through all available GPUs
       for(var i = 0; i < config.miner.count; i++) {
          if(config.miner.broken.indexOf(i) === -1 && onGpus < count) {
             onGpus++;
-            setGpu(i, '1', function(id) {
-               f++;
-               if(f >= config.miner.count) {
+            setGpu(i, gpuStates.on, function(id) {
+               if(f++ >= config.miner.count) {
                   cb();
                }
             });
          } else {
-            setGpu(i, '0', function(id) {
-               f++;
-               if(f >= config.miner.count) {
+            setGpu(i, gpuStates.off, function(id) {
+               if(f++ >= config.miner.count) {
                   cb();
                }
             });
