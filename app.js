@@ -123,7 +123,8 @@ var start = function() {
    var night = false;
    get_Grid(function(sparePower) {
       miner.getActive(function(c) {
-         console.log((sparePower+c*config.miner.ppm));
+         console.log((sparePower));
+         console.log((c*config.miner.ppm));
          var target = Math.floor((sparePower+c*config.miner.ppm) / config.miner.ppm);
          if (target < 0) target = 0;
          var hour = new Date().getHours();
