@@ -4,8 +4,8 @@ var config = require(__dirname + '/config.js');
 
 
 var start = function() {
-   var miner = new require(__dirname + '/miner.js');
-   var meter = new require(__dirname + '/meter.js');
+   var miner = require(__dirname + '/miner.js');
+   var meter = require(__dirname + '/meter.js');
 
    meter.getGrid(function(sparePower) {
       miner.getActive(function(c) {

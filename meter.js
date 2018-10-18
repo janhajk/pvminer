@@ -46,4 +46,4 @@ var Meter = function() {
 
 };
 
-exports = Meter;
+exports = new Meter();
