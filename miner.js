@@ -44,12 +44,12 @@ var Miner = function() {
          var data = JSON.parse(d);
          var cards = data.result[3];
          var count = cards.split(";");
-         var occurences = 0;
+         var active = 0;
          for(var i = 0; i < count.length; i++) {
-            if(count[i] != 'off') occurences++;
+            if(count[i] != 'off') active++;
          }
-         console.log('Cards currently "on": ' + occurences);
-         cb(occurences);
+         console.log('Cards currently "on": ' + active);
+         cb(active);
       });
    };
    // Set 'count' amount of GPUs 'on', turns the rest 'off'
