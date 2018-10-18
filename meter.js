@@ -43,5 +43,7 @@ var Meter = function() {
          cb(p);
       });
    };
+
 };
+
 exports = Meter;
