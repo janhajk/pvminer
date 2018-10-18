@@ -9,15 +9,15 @@ var fronius_api = {
    GetMeterRealtimeData: '/solar_api/v1/GetMeterRealtimeData.cgi?Scope=System'
 };
 
-var Miner = {
-   call: function(cmd, p1, p2) {
+var Miner = function() {
+   var call = function(cmd, p1, p2) {
       var c = '{"id":0,"jsonrpc":"2.0","method":"';
       if(cmd === 'control') {
          return(c + 'control_gpu", "params":["' + p1 + '", "' + p2 + '"]}');
       }
       return(c + 'miner_getstat1"}');
-   },
-   write: function(call, cb, id) {
+   };
+   var write = function(call, cb, id) {
       if(typeof id === 'undefined') id = 0;
       var s = socket.Socket();
       s.on('close', function() {
@@ -26,8 +26,8 @@ var Miner = {
       s.connect(config.miner.port, config.miner.host);
       s.write(call);
       s.end();
-   },
-   read: function(call, cb) {
+   };
+   var read = function(call, cb) {
       var s = socket.Socket();
       s.on('data', function(d) {
          cb(d);
@@ -35,15 +35,15 @@ var Miner = {
       s.connect(config.miner.port, config.miner.host);
       s.write(call);
       s.end();
-   },
-   setGpu: function(id, state, cb) {
-      var call = this.call('control', id, state);
-      this.write(call, function(id) {
+   };
+   var setGpu = function(id, state, cb) {
+      var c = call('control', id, state);
+      write(c, function(id) {
          cb(id);
       }, id);
-   },
-   getActive: function(cb) {
-      this.read(this.call(), function(d) {
+   };
+   this.getActive = function(cb) {
+      read(call(), function(d) {
          var data = JSON.parse(d);
          var cards = data.result[3];
          var count = cards.split(";");
@@ -54,9 +54,9 @@ var Miner = {
          console.log('Cards currently "on": ' + c);
          cb(occurences);
       });
-   },
+   };
    // Set 'count' amount of GPUs 'on', turns the rest 'off'
-   setGpuCount: function(count, cb) {
+   this.setGpuCount = function(count, cb) {
       var onGpus = 0; // counter for GPUs turned 'on'
       var f = 0; // async counter
       console.log('turning on ' + count + ' gpus...');
@@ -64,14 +64,14 @@ var Miner = {
       for(var i = 0; i < config.miner.count; i++) {
          if(config.miner.broken.indexOf(i) === -1 && onGpus < count) {
             onGpus++;
-            this.setGpu(i, '1', function(id) {
+            setGpu(i, '1', function(id) {
                f++;
                if(f >= config.miner.count) {
                   cb();
                }
             });
          } else {
-            this.setGpu(i, '0', function(id) {
+            setGpu(i, '0', function(id) {
                f++;
                if(f >= config.miner.count) {
                   cb();
@@ -79,7 +79,7 @@ var Miner = {
             });
          }
       }
-   }
+   };
 };
 
 
