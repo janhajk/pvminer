@@ -13,7 +13,7 @@ var start = function() {
          if (target < 0) target = 0;
          if (target > config.miner.count) target = config.miner.count;
          var hour = new Date().getHours();
-         if (hour >= 21 || hour <= 6) {
+         if (hour >= 21 || hour <= 5) {
             console.log('Nighttime! Activate all GPUs');
             target = config.miner.count;
          }
