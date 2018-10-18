@@ -4,7 +4,8 @@ exports.miner = {
    port: 3333,
    host: 'localhost',
    count: 7,
-   ppc: 130
+   ppc: 130,
+   broken: [0]            // id's of GPUs, that have to be off all the time
 };
 
 // Fronius Meter

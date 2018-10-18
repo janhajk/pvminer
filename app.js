@@ -2,8 +2,6 @@ var config = require(__dirname + '/config.js');
 var socket = require('net');
 var request = require('request');
 
-const broken_gpu = [0];
-
 var fronius_api = {
    GetSensorRealtimeData:   '/solar_api/v1/GetSensorRealtimeData.cgi?Scope=System&DataCollection=NowSensorData',
    GetInverterRealtimeData: '/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System',
@@ -11,70 +9,78 @@ var fronius_api = {
    GetMeterRealtimeData: '/solar_api/v1/GetMeterRealtimeData.cgi?Scope=System'
 };
 
-
-
-var miner_api_write = function(call, id, cb) {
-   var s = socket.Socket();
-   s.on('close', function(d) {
-      cb(id);
-   });
-   s.connect(config.miner.port, config.miner.host);
-   s.write(call);
-   s.end();
-};
-
-var miner_api_read = function(call, cb) {
-   var s = socket.Socket();
-   s.on('data', function(d) {
-      cb(d);
-   });
-   s.connect(config.miner.port, config.miner.host);
-   s.write(call);
-   s.end();
-};
-
-
-var miner_gpu_set = function(count, cb) {
-   var c = 0;
-   var f = 0;
-   var call = '';
-   console.log('turning on ' + count + ' gpus...');
-   for(var i = 0; i < config.miner.count; i++) {
-      if(broken_gpu.indexOf(i) === -1 && c < count) {
-         c++;
-         call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":["' + i + '", "' + 1 + '"]}';
-         miner_api_write(call, i, function(i) {
-            f++;
-            if (f >= config.miner.count) {
-               cb();
-            }
-         });
+var Miner = {
+   call: function(cmd, p1, p2) {
+      var c = '{"id":0,"jsonrpc":"2.0","method":"';
+      if(cmd === 'control') {
+         return(c + 'control_gpu", "params":["' + p1 + '", "' + p2 + '"]}');
       }
-      else {
-         call = '{"id":0,"jsonrpc":"2.0","method":"control_gpu", "params":["' + i + '", "' + 0 + '"]}';
-         miner_api_write(call, i, function(i) {
-            f++;
-            if (f >= config.miner.count) {
-               cb();
-            }
-         });
+      return(c + 'miner_getstat1"}');
+   },
+   write: function(call, cb, id) {
+      if(typeof id === 'undefined') id = 0;
+      var s = socket.Socket();
+      s.on('close', function() {
+         cb(id);
+      });
+      s.connect(config.miner.port, config.miner.host);
+      s.write(call);
+      s.end();
+   },
+   read: function(call, cb) {
+      var s = socket.Socket();
+      s.on('data', function(d) {
+         cb(d);
+      });
+      s.connect(config.miner.port, config.miner.host);
+      s.write(call);
+      s.end();
+   },
+   setGpu: function(id, state, cb) {
+      var call = this.call('control', id, state);
+      this.write(call, function(id) {
+         cb(id);
+      }, id);
+   },
+   getActive: function(cb) {
+      this.read(this.call(), function(d) {
+         var data = JSON.parse(d);
+         var cards = data.result[3];
+         var count = cards.split(";");
+         var occurences = 0;
+         for(var i = 0; i < count.length; i++) {
+            if(count[i] != 'off') occurences++;
+         }
+         console.log('Cards currently "on": ' + c);
+         cb(occurences);
+      });
+   },
+   // Set 'count' amount of GPUs 'on', turns the rest 'off'
+   setGpuCount: function(count, cb) {
+      var onGpus = 0; // counter for GPUs turned 'on'
+      var f = 0; // async counter
+      console.log('turning on ' + count + ' gpus...');
+      // Iterate through all available GPUs
+      for(var i = 0; i < config.miner.count; i++) {
+         if(config.miner.broken.indexOf(i) === -1 && onGpus < count) {
+            onGpus++;
+            this.setGpu(i, '1', function(id) {
+               f++;
+               if(f >= config.miner.count) {
+                  cb();
+               }
+            });
+         } else {
+            this.setGpu(i, '0', function(id) {
+               f++;
+               if(f >= config.miner.count) {
+                  cb();
+               }
+            });
+         }
       }
    }
 };
-
-var miner_active_count = function(cb) {
-   miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
-      var data = JSON.parse(r);
-      var card = data.result[3];
-      var count = card.split(";");
-      var occurences = 0;
-      for (var i = 0;i<count.length;i++) {
-         if (count[i]!='off') occurences++;
-      }
-      cb(occurences);
-   });
-};
-
 
 
 var meter_api = function(call, cb) {
@@ -105,59 +111,34 @@ var get_Grid = function(cb) {
    meter_api(call, function(err, response, body) {
    var data = JSON.parse(body);
    var p = data.Body.Data['0'].PowerReal_P_Sum;
+   console.log('Power: ' + p + 'W');
    cb(p);
    });
 };
 
 
 var start = function() {
+   var miner = new Miner();
+   var night = false;
    get_Grid(function(P) {
-      miner_active_count(function(c) {
+      miner.getActive(function(c) {
          var hour = new Date().getHours();
-         console.log('Active Cards: ' + c);
-         var count = Math.floor((Math.abs(P)+c*config.miner.ppm) / config.miner.ppm);
-         console.log('Power: ' + P + 'W');
-         if(P < 0) {
-            console.log('Cards to Activate: ' + count);
-            miner_gpu_set(count, function() {
-               miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
-                  console.log(r.toString());
-               });
-            });
-         } 
-         else if (hour >= 21 || hour <= 6) {
+         if (hour >= 21 || hour <= 6) {
             console.log('Nighttime! Activate all GPUs');
-            miner_gpu_set(config.miner.count, function() {
-            });
+            night = true;
+            target = config.miner.count;
+         }
+         var target = Math.floor((Math.abs(P)+c*config.miner.ppm) / config.miner.ppm);
+         if(P < 0 || night) {
+            console.log('Cards to Activate: ' + target);
+            miner.setGpuCount(target, function(){});
          }
          else {
             console.log('No Power to activate');
-            miner_gpu_set(0, function() {
-               console.log('turned off all GPUs!');
-            });
+            miner.setGpuCount(0, function(){});
          }
       });
    });
 };
 
 start();
-
-
-
-var test = function() {
-   miner_api_read('{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}', function(r) {
-      console.log(r.toString());
-   });
-   meter_api(fronius_api.GetMeterRealtimeData, function(err, response, body) {
-      console.log('IP ' + config.meter.host);
-      console.log(body);
-   });
-   get_PAC(function(pac) {
-      console.log('PAC: ' + pac + ' Watt');
-   });
-   get_Grid(function(P) {
-      console.log('To/From Grid: ' + P + ' Watt');
-   });
-};
-
-if (config.dev) test();
