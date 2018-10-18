@@ -74,4 +74,4 @@ var Miner = function() {
    };
 };
 
-exports = new Miner();
+module.exports = new Miner();
