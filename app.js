@@ -112,7 +112,7 @@ var get_Grid = function(cb) {
    var data = JSON.parse(body);
    var p = data.Body.Data['0'].PowerReal_P_Sum;
    console.log('Spare Power: ' + (-p) + ' Watt');
-   cb(p);
+   cb(-p);
    });
 };
 
@@ -120,23 +120,17 @@ var get_Grid = function(cb) {
 var start = function() {
    var miner = new Miner();
    var night = false;
-   get_Grid(function(P) {
+   get_Grid(function(sparePower) {
       miner.getActive(function(c) {
+         var target = Math.floor((sparePower+c*config.miner.ppm) / config.miner.ppm);
+         if (target < 0) target = 0;
          var hour = new Date().getHours();
          if (hour >= 21 || hour <= 6) {
             console.log('Nighttime! Activate all GPUs');
-            night = true;
             target = config.miner.count;
          }
-         var target = Math.floor((Math.abs(P)+c*config.miner.ppm) / config.miner.ppm);
-         if(P < 0 || night) {
-            console.log('Cards to Activate: ' + target);
-            miner.setGpuCount(target, function(){});
-         }
-         else {
-            console.log('No Power to activate');
-            miner.setGpuCount(0, function(){});
-         }
+         console.log('Cards to Activate: ' + target);
+         miner.setGpuCount(target, function(){});
       });
    });
 };
