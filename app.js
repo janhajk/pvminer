@@ -109,10 +109,11 @@ var get_PAC = function(cb) {
 var get_Grid = function(cb) {
    var call = fronius_api.GetMeterRealtimeData;
    meter_api(call, function(err, response, body) {
-   var data = JSON.parse(body);
-   var p = data.Body.Data['0'].PowerReal_P_Sum;
-   console.log('Spare Power: ' + (-p) + ' Watt');
-   cb(-p);
+      var data = JSON.parse(body);
+      var p = data.Body.Data['0'].PowerReal_P_Sum;
+      p = -p;
+      console.log('Spare Power: ' + p + ' Watt');
+      cb(p);
    });
 };
 
