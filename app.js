@@ -111,7 +111,7 @@ var get_Grid = function(cb) {
    meter_api(call, function(err, response, body) {
    var data = JSON.parse(body);
    var p = data.Body.Data['0'].PowerReal_P_Sum;
-   console.log('Power: ' + p + 'W');
+   console.log('Power: ' + (-p) + ' Watt');
    cb(p);
    });
 };
