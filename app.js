@@ -9,6 +9,7 @@ var start = function() {
 
    meter.getGrid(function(sparePower) {
       miner.getActive(function(c) {
+         console.log('Total Sparepower including running GPUs: ' + (sparePower+c*config.miner.ppc));
          var target = Math.floor((sparePower+c*config.miner.ppc) / config.miner.ppc);
          if (target < 0) target = 0;
          if (target > config.miner.count) target = config.miner.count;
