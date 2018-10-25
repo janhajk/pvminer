@@ -14,4 +14,9 @@ exports.meter = {
    host: '192.168.1.92'
 };
 
+exports.tarifs = {
+   nightFrom: 21,
+   nightTo: 6
+};
+
 exports.dev = false;

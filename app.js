@@ -13,8 +13,9 @@ var start = function() {
          if (target < 0) target = 0;
          if (target > config.miner.count) target = config.miner.count;
          var hour = new Date().getHours();
-         if (hour >= 21 || hour <= 5) {
-            console.log('Nighttime! Activate all GPUs');
+         var day = new Date().getDay();
+         if (day == 0 || day == 6 || hour >= config.tarifs.nightFrom || hour < config.tarifs.nightTo) {
+            console.log('Nighttime/Weekend! Activate all GPUs');
             target = config.miner.count;
          }
          console.log('Cards to Activate: ' + target);
