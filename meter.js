@@ -16,11 +16,12 @@ var Meter = function() {
    var call = function(path, cb) {
       var url = 'http://' + config.meter.host + '/' + path;
       request(url, function(e, response, body) {
-         if(e) {
+         if (e) {
             console.log('error in request ' + url);
             console.log(e);
             cb(e);
-         } else {
+         }
+         else {
             cb(null, response, body);
          }
       });
