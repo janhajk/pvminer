@@ -45,7 +45,7 @@ var logGet = function(connection, cb) {
         function(error, rows, fields) {
             var objs = [];
             for (var i = 0; i < rows.length; i++) {
-                objs.push([ rows[i].timestamp*1000, rows[i].pv, rows[i].grid/*, rows[i].temp*/ ]);
+                objs.push([ rows[i].timestamp*1000, rows[i].pv/1000, rows[i].grid/1000/*, rows[i].temp*/ ]);
             };
             cb(JSON.stringify(objs));
         });

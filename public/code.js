@@ -1,24 +1,24 @@
 $.getJSON(
     'https://solarweb.servus.janschaer.ch/data/json',
-    function (data) {
+    function(data) {
 
         Highcharts.chart('container', {
             chart: {
                 zoomType: 'x'
             },
             title: {
-                text: 'USD to EUR exchange rate over time'
+                text: 'Strom'
             },
             subtitle: {
                 text: document.ontouchstart === undefined ?
-                        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
             },
             xAxis: {
                 type: 'datetime'
             },
             yAxis: {
                 title: {
-                    text: 'Exchange rate'
+                    text: 'kW'
                 }
             },
             legend: {
@@ -50,12 +50,21 @@ $.getJSON(
                     threshold: null
                 }
             },
-
+            data: {
+                columnsURL: 'https://solarweb.servus.janschaer.ch/data/json',
+                dataRefreshRate: 2,
+                enablePolling: true,
+                firstRowAsNames: false
+            },
             series: [{
-                type: 'area',
-                name: 'USD to EUR',
-                data: data
-            }]
+                    type: 'area',
+                    name: 'Stromproduktion',
+                },
+                {
+                    type: 'area',
+                    name: 'Stromverbrauch',
+                }
+            ]
         });
     }
 );
