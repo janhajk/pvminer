@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 });
 
 
-var Log = function(cb) {
+var logWrite = function(cb) {
     meter.getPAC(function(pv) {
         meter.getGrid(function(grid) {
             // Open Connection
@@ -38,4 +38,21 @@ var Log = function(cb) {
 
 
 
-module.exports.log = Log;
+module.exports.write = logWrite;
+
+var logGet = function(cb) {
+
+    connection.connect();
+    connection.query('SELECT * FROM log_minute',
+        function(error, rows, fields) {
+            var objs = [];
+            for (var i = 0; i < rows.length; i++) {
+                objs.push({ timestamp: rows[i].timestamp, pv: rows[i].pv, grid: rows[i].grid, temp: rows[i].temp });
+            }
+            connection.end();
+            cb(JSON.stringify(objs));
+            connection.end();
+        });
+};
+
+module.exports.get = logGet;

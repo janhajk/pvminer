@@ -1,37 +1,67 @@
+// User Config File
 var config = require(__dirname + '/config.js');
+// Utils
+var utils  = require(__dirname + '/utils.js');
+
+// DEV-Mode
+var dev = process.argv[2];
+if (dev !== undefined && dev) {
+    config.dev = true;
+    utils.log('running in dev mode');
+}
+
+// Routing
+var routing = require(__dirname + '/routing.js');
+
+// Auth
+var auth = require(__dirname + '/auth.js');
+
+// System
+var path = require('path');
+
+// Database
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host: config.database.host,
+    port: config.database.port,
+    user: config.database.user,
+    password: config.database.password,
+    database: config.database.db
+});
 
 
+// Express
+var express        = require('express');
+var compression    = require('compression');
+var bodyParser     = require('body-parser');
+var methodOverride = require('method-override');
+var cookieParser   = require('cookie-parser');
+var session        = require('express-session');
+
+var app            = express();
+app.use(compression());
+app.use(methodOverride());  // simulate DELETE and PUT
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(cookieParser());
+app.use(session({
+    secret: config.cookiesecret,
+    proxy: true,
+    resave: true,
+    saveUninitialized: true
+}));
+
+// Public directory
+app.use(express.static((path.join(__dirname, 'public'))));
 
 
-var start = function() {
-   var miner = require(__dirname + '/miner.js');
-   var meter = require(__dirname + '/meter.js');
+// Auth-Routes
+auth.routing(app);
 
-   meter.getSparePower(function(sparePower) {
-      miner.getActive(function(c) {
-         console.log('Total Sparepower including running GPUs: ' + (sparePower+c*config.miner.ppc));
-         var target = Math.floor((sparePower+c*config.miner.ppc) / config.miner.ppc);
-         if (target < 0) target = 0;
-         if (target > config.miner.count) target = config.miner.count;
-         var hour = new Date().getHours();
-         var day = new Date().getDay();
-         if (day == 0 || day == 6 || hour >= config.tarifs.nightFrom || hour < config.tarifs.nightTo) {
-            console.log('Nighttime/Weekend! Activate all GPUs');
-            target = config.miner.count;
-         }
-         console.log('Cards to Activate: ' + target);
-         miner.setGpuCount(target, function(){});
-      });
-   });
-};
+// Routing
+routing.basic(app, connection);
 
 
-var log_minute = function() {
-   var log = require(__dirname + '/log.js');
-   log.log(function(){
-      
-   });
-};
-
-start();
-log_minute();
+app.listen(config.port, function () {
+    utils.log('App runnung on port ' + config.port);
+});

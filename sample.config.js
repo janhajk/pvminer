@@ -8,6 +8,10 @@ exports.miner = {
    broken: [0]            // id's of GPUs, that have to be off all the time
 };
 
+exports.port = 1234;
+
+exports.cookiesecret
+
 // Fronius Meter
 exports.meter = {
    port: '',
