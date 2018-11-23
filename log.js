@@ -44,6 +44,7 @@ var logGet = function(connection, cb) {
     connection.query('SELECT * FROM log_minute',
         function(error, rows, fields) {
             var objs = [];
+            objs.push(['Timestamp', 'PV Produktion', 'From Grid', 'Total used']);
             for (var i = 0; i < rows.length; i++) {
                 objs.push([ rows[i].timestamp*1000, rows[i].pv/1000, rows[i].grid/1000, (rows[i].grid+rows[i].pv)/1000/*, rows[i].temp*/ ]);
             };
