@@ -19,4 +19,12 @@ exports.tarifs = {
    nightTo: 6
 };
 
+exports.database = {
+   host: '192.168.1.65',
+   user: 'root',
+   password: '',
+   port: 3306,
+   db: 'solarweb'
+};
+
 exports.dev = false;
