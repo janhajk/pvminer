@@ -27,7 +27,7 @@ var Meter = function() {
       });
    };
 
-   var getPAC = function(cb) {
+   this.getPAC = function(cb) {
       call(fronius_api.GetInverterRealtimeData, function(err, response, body) {
          console.log('> IP ' + config.meter.host + '...');
          var data = JSON.parse(body);
@@ -39,6 +39,12 @@ var Meter = function() {
       call(fronius_api.GetMeterRealtimeData, function(err, response, body) {
          var data = JSON.parse(body);
          var p = data.Body.Data['0'].PowerReal_P_Sum;
+         cb(p);
+      });
+   };
+   
+   this.getSparePower = function(cb) {
+      this.getGrid(function(p){
          p = -p;
          console.log('Current Spare Power: ' + p + ' Watt');
          cb(p);
