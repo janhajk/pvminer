@@ -10,6 +10,7 @@
   "private": true,
   "dependencies": {
     "json-rpc2": "^1.0.2",
-    "rpc-websockets": "^3.5.0"
+    "rpc-websockets": "^3.5.0",
+    "mysql": "2.x"
   }
 }
