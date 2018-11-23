@@ -12,6 +12,10 @@
     "json-rpc2": "^1.0.2",
     "request": "^2.88.0",
     "rpc-websockets": "^3.5.0",
-    "mysql": "2.x"
+    "mysql": "2.x",
+    "passport": "0.3.x",
+    "passport-google-oauth": "0.2.x",
+    "cookie-parser": "1.4.x",
+    "express-session": "1.15.x",
   }
 }
