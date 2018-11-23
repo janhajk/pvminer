@@ -7,7 +7,7 @@ var start = function() {
    var miner = require(__dirname + '/miner.js');
    var meter = require(__dirname + '/meter.js');
 
-   meter.getGrid(function(sparePower) {
+   meter.getSparePower(function(sparePower) {
       miner.getActive(function(c) {
          console.log('Total Sparepower including running GPUs: ' + (sparePower+c*config.miner.ppc));
          var target = Math.floor((sparePower+c*config.miner.ppc) / config.miner.ppc);
@@ -25,4 +25,13 @@ var start = function() {
    });
 };
 
+
+var log_minute = function() {
+   var log = require(__dirname + '/log.js');
+   log.log(function(){
+      
+   });
+};
+
 start();
+log_minute();
