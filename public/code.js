@@ -10,7 +10,7 @@ function createChart() {
         data: {
             rowsURL: 'https://solarweb.servus.janschaer.ch/data/json',
             enablePolling: true,
-            dataRefreshRate: 2
+            dataRefreshRate: 60
         },
         xAxis: {
             type: 'datetime'
