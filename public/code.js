@@ -45,13 +45,7 @@ function createChart() {
                 },
                 threshold: null
             }
-        },
-        series: [{
-                type: 'area',
-            },
-            { type: 'area' },
-            { type: 'area' }
-        ]
+        }
     });
 }
 
