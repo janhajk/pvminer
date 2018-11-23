@@ -1,7 +1,8 @@
 function createChart() {
     Highcharts.chart('container', {
         chart: {
-            type: 'spline'
+            type: 'spline',
+            zoomType: 'x'
         },
         title: {
             text: 'Strom'
