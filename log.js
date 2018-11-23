@@ -1,23 +1,22 @@
-var mysql = require('mysql');
 var config = require(__dirname + '/config.js');
 var meter = require(__dirname + '/meter.js');
 
-
-var connection = mysql.createConnection({
-    host: config.database.host,
-    user: config.database.user,
-    password: config.database.password,
-    database: config.database.db,
-    port: config.database.port
-});
 
 
 var logWrite = function(cb) {
     meter.getPAC(function(pv) {
         meter.getGrid(function(grid) {
+            var mysql = require('mysql');
+            var connection = mysql.createConnection({
+                host: config.database.host,
+                user: config.database.user,
+                password: config.database.password,
+                database: config.database.db,
+                port: config.database.port
+            });
             // Open Connection
             connection.connect();
-            
+
             // Write to DB
             var values = [];
             values.push(Math.floor(Date.now() / 1000));
@@ -40,9 +39,8 @@ var logWrite = function(cb) {
 
 module.exports.write = logWrite;
 
-var logGet = function(cb) {
+var logGet = function(connection, cb) {
 
-    connection.connect();
     connection.query('SELECT * FROM log_minute',
         function(error, rows, fields) {
             var objs = [];
@@ -51,7 +49,6 @@ var logGet = function(cb) {
             };
             cb(JSON.stringify(objs));
         });
-        connection.end();
 };
 
 module.exports.get = logGet;

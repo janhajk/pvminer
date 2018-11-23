@@ -19,7 +19,7 @@ var basic = function(app, connection) {
     });
 
     app.get('/data/json', /*auth.ensureAuthenticated, */ function(req, res) {
-        log.get(function(e, data) {
+        log.get(connection,function(e, data) {
             res.send(e ? e : data);
         });
     });
