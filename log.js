@@ -50,8 +50,8 @@ var logGet = function(cb) {
                 objs.push({ timestamp: rows[i].timestamp, pv: rows[i].pv, grid: rows[i].grid, temp: rows[i].temp });
             };
             cb(JSON.stringify(objs));
-            connection.end();
         });
+        connection.end();
 };
 
 module.exports.get = logGet;
