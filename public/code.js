@@ -8,7 +8,8 @@ function createChart() {
             text: 'Strom'
         },
         time: {
-            timezone: 'Europe/Berlin'
+            timezone: 'Europe/Berlin',
+            useUTC: false
         },
         data: {
             rowsURL: 'https://solarweb.servus.janschaer.ch/data/json',
