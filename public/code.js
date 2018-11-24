@@ -1,5 +1,5 @@
 function createChart() {
-    Highcharts.chart('container', {
+    Highcharts.stockChart('container', {
         chart: {
             type: 'spline',
             zoomType: 'x'
