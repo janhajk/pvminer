@@ -1,5 +1,6 @@
 var config = require(__dirname + '/config.js');
 var meter = require(__dirname + '/meter.js');
+var async = require('async');
 
 
 
@@ -20,7 +21,7 @@ var logWrite = function(cb) {
             connection.connect();
 
             // Write to DB
-            var temp = 10;  // TODO: read outside temperature from sensor
+            var temp = 10; // TODO: read outside temperature from sensor
             var values = [];
             values.push(Math.floor(Date.now() / 1000));
             values.push(pv);
@@ -38,15 +39,29 @@ var logWrite = function(cb) {
             values.push(grid);
             values.push(temp);
             queries.push('INSERT IGNORE INTO log_5_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
-            console.log(queries.join(';'));
-            // Fire Queries
-            connection.query(queries.join(';'), function(error, results, fields) {
-                if (error) throw error;
-                cb();
-            });
-            // Close connection
-            connection.end();
 
+            // Start Async
+            async.parallel([
+                    function(callback) {
+                        // Fire Query
+                        connection.query(queries[0], function(error, results, fields) {
+                            if (error) throw error;
+                            callback(error, results);
+                        });
+                    },
+                    function(callback) {
+                        // Fire Query
+                        connection.query(queries[1], function(error, results, fields) {
+                            if (error) throw error;
+                            callback(error, results);
+                        });
+                    }
+                ],
+                function(err, results) {
+                    // Close connection
+                    connection.end();
+                    cb();
+                });
         });
     });
 
@@ -63,7 +78,7 @@ var logGet = function(connection, cb) {
             var objs = [];
             objs.push(['Timestamp', 'PV Produktion', 'From Grid', 'Total used']);
             for (var i = 0; i < rows.length; i++) {
-                objs.push([ rows[i].timestamp*1000, rows[i].pv/1000, rows[i].grid/1000, (rows[i].grid+rows[i].pv)/1000/*, rows[i].temp*/ ]);
+                objs.push([rows[i].timestamp * 1000, rows[i].pv / 1000, rows[i].grid / 1000, (rows[i].grid + rows[i].pv) / 1000 /*, rows[i].temp*/ ]);
             };
             cb(JSON.stringify(objs));
         });
