@@ -37,7 +37,7 @@ var logWrite = function(cb) {
             values.push(pv);
             values.push(grid);
             values.push(temp);
-            queries.push('INSERT INTO log_5_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
+            queries.push('INSERT INTO log_5_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ') ON DUPLICATE KEY UPDATE pv = values('+pv+'), grid = values('+grid+');');
             console.log(queries.join(';'));
             // Fire Queries
             connection.query(queries.join(';'), function(error, results, fields) {
