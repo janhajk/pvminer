@@ -22,42 +22,39 @@ var logWrite = function(cb) {
 
             // Write to DB
             var temp = 10; // TODO: read outside temperature from sensor
-            var values = [];
-            values.push(Math.floor(Date.now() / 1000));
-            values.push(pv);
-            values.push(grid);
-            values.push(temp);
-            var queries = [];
-            queries.push('INSERT IGNORE INTO log_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
-            // Five Minute interval
-            var coeff = 1000 * 60 * 5;
-            var date = new Date();
-            var rounded = new Date(Math.round(date.getTime() / coeff) * coeff);
-            values = [];
-            values.push(Math.floor(rounded / 1000));
-            values.push(pv);
-            values.push(grid);
-            values.push(temp);
-            queries.push('INSERT IGNORE INTO log_5_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
-
             // Start Async
             async.parallel([
                     function(callback) {
+                        var values = [];
+                        values.push(Math.floor(Date.now() / 1000));
+                        values.push(pv);
+                        values.push(grid);
+                        values.push(temp);
+                        var query = 'INSERT IGNORE INTO log_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')';
                         // Fire Query
-                        connection.query(queries[0], function(error, results, fields) {
-                            if (error) throw error;
+                        connection.query(query, function(error, results, fields) {
                             callback(error, results);
                         });
                     },
                     function(callback) {
+                        // Five Minute interval
+                        var coeff = 1000 * 60 * 5;
+                        var date = new Date();
+                        var rounded = new Date(Math.round(date.getTime() / coeff) * coeff);
+                        var values = [];
+                        values.push(Math.floor(rounded / 1000));
+                        values.push(pv);
+                        values.push(grid);
+                        values.push(temp);
+                        var query = 'INSERT IGNORE INTO log_5_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')';
                         // Fire Query
-                        connection.query(queries[1], function(error, results, fields) {
-                            if (error) throw error;
+                        connection.query(query, function(error, results, fields) {
                             callback(error, results);
                         });
                     }
                 ],
                 function(err, results) {
+                    if (err) throw err;
                     // Close connection
                     connection.end();
                     cb();
