@@ -27,7 +27,7 @@ var logWrite = function(cb) {
             values.push(grid);
             values.push(temp);
             var queries = [];
-            queries.push('INSERT INTO log_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
+            queries.push('INSERT IGNORE INTO log_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
             // Five Minute interval
             var coeff = 1000 * 60 * 5;
             var date = new Date();
