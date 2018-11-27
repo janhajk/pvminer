@@ -35,7 +35,6 @@ var logWrite = function(cb) {
             values.push(pv);
             values.push(grid);
             values.push(temp);
-            var queries = [];
             queries.push('INSERT INTO log_5_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
             // Fire Queries
             connection.query(queries.join(';'), function(error, results, fields) {
