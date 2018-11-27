@@ -17,7 +17,12 @@ function createChart() {
             dataRefreshRate: 60
         },
         xAxis: {
-            type: 'datetime'
+            type: 'datetime',
+            plotBands: [{
+                from: 4.5,
+                to: 6.5,
+                color: 'rgba(68, 170, 213, .2)'
+            }]
         },
         yAxis: {
             title: {
@@ -56,3 +61,13 @@ function createChart() {
 
 
 createChart();
+
+
+function getSix() {
+    var d = new Date(); // Today
+    var tag = d.getDate();
+    var monat = d.getMonth();
+    var jahr = d.getFullYear();
+    if (d.getHours() < 6) tag--;
+    
+}
