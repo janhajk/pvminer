@@ -6,6 +6,8 @@ var meter = require(__dirname + '/meter.js');
 var logWrite = function(cb) {
     meter.getPAC(function(pv) {
         meter.getGrid(function(grid) {
+            grid = Math.round(grid);
+            pv = Math.round(pv);
             var mysql = require('mysql');
             var connection = mysql.createConnection({
                 host: config.database.host,
