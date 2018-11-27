@@ -18,12 +18,27 @@ var logWrite = function(cb) {
             connection.connect();
 
             // Write to DB
+            var temp = 10;  // TODO: read outside temperature from sensor
             var values = [];
             values.push(Math.floor(Date.now() / 1000));
             values.push(pv);
             values.push(grid);
-            values.push(10);
-            connection.query('INSERT INTO log_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')', function(error, results, fields) {
+            values.push(temp);
+            var queries = [];
+            queries.push('INSERT INTO log_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
+            // Five Minute interval
+            var coeff = 1000 * 60 * 5;
+            var date = new Date();
+            var rounded = new Date(Math.round(date.getTime() / coeff) * coeff);
+            values = [];
+            values.push(Math.floor(rounded / 1000));
+            values.push(pv);
+            values.push(grid);
+            values.push(temp);
+            var queries = [];
+            queries.push('INSERT INTO log_5_minute (timestamp, pv, grid, temp) VALUES (' + values.join(',') + ')');
+            // Fire Queries
+            connection.query(queries.join(';'), function(error, results, fields) {
                 if (error) throw error;
                 cb();
             });
