@@ -12,7 +12,7 @@ function createChart() {
             useUTC: false
         },
         data: {
-            rowsURL: 'https://solarweb.servus.janschaer.ch/data/json',
+            rowsURL: 'https://solarweb.servus.janschaer.ch/data/json/minute',
             enablePolling: true,
             dataRefreshRate: 60
         },

@@ -63,12 +63,11 @@ var logWrite = function(cb) {
     });
 
 };
-
-
-
 module.exports.write = logWrite;
 
-var logGet = function(connection, cb) {
+
+
+var logGetMinute = function(connection, cb) {
 
     connection.query('SELECT * FROM log_minute',
         function(error, rows, fields) {
@@ -81,4 +80,4 @@ var logGet = function(connection, cb) {
         });
 };
 
-module.exports.get = logGet;
+module.exports.getMinute = logGetMinute;
