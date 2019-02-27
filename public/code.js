@@ -1,4 +1,4 @@
-function createChart() {
+var createChart = function() {
     Highcharts.stockChart('container', {
         chart: {
             type: 'spline',
@@ -12,9 +12,7 @@ function createChart() {
             useUTC: false
         },
         data: {
-            rowsURL: 'https://solarweb.servus.janschaer.ch/data/json/minute',
-            enablePolling: true,
-            dataRefreshRate: 60
+            rowsURL: 'https://solarweb.servus.janschaer.ch/data/json/minute'
         },
         xAxis: {
             type: 'datetime',
@@ -56,7 +54,7 @@ function createChart() {
             }
         }
     });
-}
+};
 
 
 
@@ -69,5 +67,46 @@ function getSix() {
     var monat = d.getMonth();
     var jahr = d.getFullYear();
     if (d.getHours() < 6) tag--;
-    
+
 }
+
+
+
+/**
+ * Creates empty LineChart Object
+ * and appends to parent-DOM
+ *
+ */
+var emptyLineChart = function(parent) {
+    var canvas = document.createElement('canvas');
+    canvas.width = '400';
+    canvas.height = '400';
+    canvas.style.width = '400px';
+    canvas.style.height = '400px';
+    parent.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                data: []
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                }]
+            },
+            elements: {
+                line: {
+                    tension: 0, // disables bezier curves
+                }
+            }
+        }
+    });
+    return chart;
+};

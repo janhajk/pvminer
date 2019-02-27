@@ -21,7 +21,8 @@
     "async": "2.1.4",
     "compression": "1.x.x",
     "body-parser": "1.x.x",
-    "method-override": "2.3.x"
+    "method-override": "2.3.x",
+    "influx": "5.x.x"
 
   }
 }

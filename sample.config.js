@@ -31,4 +31,12 @@ exports.database = {
    db: 'solarweb'
 };
 
+exports.influxdb = {
+   host: '',
+   user: '',
+   password: '',
+   port: 8086,
+   db: ''
+};
+
 exports.dev = false;

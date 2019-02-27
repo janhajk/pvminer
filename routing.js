@@ -23,5 +23,11 @@ var basic = function(app, connection) {
             res.send(e ? e : data);
         });
     });
+    
+    app.get('/data/json/minute', /*auth.ensureAuthenticated, */ function(req, res) {
+        log.getMinute(connection,function(e, data) {
+            res.send(e ? e : data);
+        });
+    });
 };
 exports.basic = basic;
