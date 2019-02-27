@@ -47,6 +47,7 @@ var Meter = function() {
    this.getGrid = function(cb) {
       call(fronius_api.GetMeterRealtimeData, function(err, response, body) {
          var data = JSON.parse(body);
+         console.log(data.Body.Data['0']);
          var p = data.Body.Data['0'].PowerReal_P_Sum;
          cb(p);
       });
