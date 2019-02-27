@@ -2,7 +2,6 @@ const config = require(__dirname + '/config.js');
 var meter = require(__dirname + '/meter.js');
 
 const Influx = require("influx");
-const request = require("request");
 
 
 const influx = new Influx.InfluxDB({
@@ -12,28 +11,38 @@ const influx = new Influx.InfluxDB({
       password: config.influxdb.password,
 
       schema: [{
-            measurement: "PAC",
-            fields: { value: Influx.FieldType.FLOAT },
+            measurement: "powerdata",
+            fields: {
+                  pac: Influx.FieldType.FLOAT,
+                  grid: Influx.FieldType.FLOAT
+            },
             tags: []
       }]
 });
 
 let writeData = function() {
       meter.getPAC(function(pv) {
-            influx
-                  .writePoints(
-                        [{
-                              measurement: "PAC",
-                              fields: { value: pv }
-                        }], {
-                              database: config.influxdb.db,
-                              precision: "s"
-                        }
-                  )
-                  .catch(err => {
-                        console.error("Error writing data to Influx.");
-                  });
+            meter.getGrid(function(grid) {
+                  influx
+                        .writePoints(
+                              [{
+                                    measurement: "powerdata",
+                                    fields: {
+                                          pac: pv,
+                                          grid: grid
+                                    }
+                              }], {
+                                    database: config.influxdb.db,
+                                    precision: "s"
+                              }
+                        )
+                        .catch(err => {
+                              console.error("Error writing data to Influx.");
+                        });
+            });
       });
 };
-
-setInterval(writeData, 10000);
+influx.query('DROP SERIES FROM /.*/').then(results => {
+  console.log(results)
+})
+//setInterval(writeData, 10000);
