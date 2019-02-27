@@ -14,7 +14,8 @@ const influx = new Influx.InfluxDB({
             measurement: "powerdata",
             fields: {
                   pac: Influx.FieldType.FLOAT,
-                  grid: Influx.FieldType.FLOAT
+                  grid: Influx.FieldType.FLOAT,
+                  total: Influx.FieldType.FLOAT
             },
             tags: []
       }]
@@ -29,7 +30,8 @@ let writeData = function() {
                                     measurement: "powerdata",
                                     fields: {
                                           pac: pv,
-                                          grid: grid
+                                          grid: grid,
+                                          total: pv + grid
                                     }
                               }], {
                                     database: config.influxdb.db,
