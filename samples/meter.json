@@ -1,0 +1,10 @@
+{ Body:
+   { Data:
+      { DAY_ENERGY: [Object],
+        PAC: [Object],
+        TOTAL_ENERGY: [Object],
+        YEAR_ENERGY: [Object] } },
+  Head:
+   { RequestArguments: { DeviceClass: 'Inverter', Scope: 'System' },
+     Status: { Code: 0, Reason: '', UserMessage: '' },
+     Timestamp: '2019-02-27T17:05:22+01:00' } }
