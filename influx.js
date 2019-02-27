@@ -25,7 +25,7 @@ let writeData = function() {
                               measurement: "PAC",
                               fields: { value: pv }
                         }], {
-                              database: "test",
+                              database: "grafana",
                               precision: "s"
                         }
                   )
