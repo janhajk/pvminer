@@ -31,6 +31,7 @@ var Meter = function() {
       call(fronius_api.GetInverterRealtimeData, function(err, response, body) {
          console.log('> IP ' + config.meter.host + '...');
          var data = JSON.parse(body);
+         console.log(data);
          cb(data.Body.Data.PAC.Values['1']);
       });
    };
