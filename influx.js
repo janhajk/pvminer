@@ -13,7 +13,8 @@ const influx = new Influx.InfluxDB({
 
       schema: [{
             measurement: "PAC",
-            fields: { value: Influx.FieldType.FLOAT }
+            fields: { value: Influx.FieldType.FLOAT },
+            tags: []
       }]
 });
 
@@ -25,7 +26,7 @@ let writeData = function() {
                               measurement: "PAC",
                               fields: { value: pv }
                         }], {
-                              database: "grafana",
+                              database: config.influxdb.db,
                               precision: "s"
                         }
                   )
