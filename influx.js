@@ -44,5 +44,5 @@ let writeData = function() {
 };
 // influx.query('DROP SERIES FROM /.*/').then(results => {
 //   console.log(results)
-})
+// })
 setInterval(writeData, 10000);
