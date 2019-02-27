@@ -31,8 +31,16 @@ var Meter = function() {
       call(fronius_api.GetInverterRealtimeData, function(err, response, body) {
          console.log('> IP ' + config.meter.host + '...');
          var data = JSON.parse(body);
-         console.log(data.Body.Data.DAY_ENERGY);
          cb(data.Body.Data.PAC.Values['1']);
+      });
+   };
+   
+   this.getInverter = function(cb) {
+      call(fronius_api.GetInverterRealtimeData, function(err, response, body) {
+         console.log('> IP ' + config.meter.host + '...');
+         var data = JSON.parse(body);
+         console.log(data.Body.Data.DAY_ENERGY);
+         cb({pac: data.Body.Data.PAC.Values['1'], day_energy: data.Body.Data.DAY_ENERGY.Values['1'] });
       });
    };
 

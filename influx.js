@@ -15,23 +15,25 @@ const influx = new Influx.InfluxDB({
             fields: {
                   pac: Influx.FieldType.FLOAT,
                   grid: Influx.FieldType.FLOAT,
-                  total: Influx.FieldType.FLOAT
+                  total: Influx.FieldType.FLOAT,
+                  day_energy: Influx.FieldType.FLOAT
             },
             tags: []
       }]
 });
 
 let writeData = function() {
-      meter.getPAC(function(pv) {
+      meter.getInverter(function(dataInverter) {
             meter.getGrid(function(grid) {
                   influx
                         .writePoints(
                               [{
                                     measurement: "powerdata",
                                     fields: {
-                                          pac: pv,
+                                          pac: dataInverter.pac,
                                           grid: grid,
-                                          total: pv + grid
+                                          total: dataInverter.pac + grid,
+                                          day_energy: dataInverter.day_energy
                                     }
                               }], {
                                     database: config.influxdb.db,
